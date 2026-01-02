@@ -1,0 +1,17 @@
+﻿{
+    "max_tokens":  64,
+    "messages":  [
+                     {
+                         "content":  [
+                                         {
+                                             "text":  "Hello. Reply with: Bedrock smoke test OK.",
+                                             "type":  "text"
+                                         }
+                                     ],
+                         "role":  "user"
+                     }
+                 ],
+    "temperature":  0.2,
+    "top_p":  0.9,
+    "anthropic_version":  "bedrock-2023-05-31"
+}

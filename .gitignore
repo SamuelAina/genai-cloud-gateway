@@ -1,0 +1,25 @@
+# Python
+.venv/
+
+venv/
+
+__pycache__/
+*.pyc
+
+# Environment
+.env
+
+# Databases
+*.sqlite
+
+# .NET
+bin/
+obj/
+
+# VS / IDE
+.vs/
+*.user
+
+# OS
+.DS_Store
+Thumbs.db

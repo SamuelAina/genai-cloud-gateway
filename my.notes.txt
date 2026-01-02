@@ -1,0 +1,249 @@
+#Testing the setup:
+
+command:
+curl.exe -X POST http://localhost:8000/generate -H "Content-Type: application/json" -d "{\"prompt\":\"Summarise: The system reduced processing costs by 18% while improving accuracy.\",\"task\":\"summarise\",\"priority\":\"low_cost\"}"
+
+
+output:
+{
+    "request_id": "b6781d0f-9d91-4af7-887a-9d3790fd9389",
+    "chosen_provider": "azure",
+    "chosen_model": "gpt-4o-mini",
+    "text": "- Processing costs reduced by 18%\n- Improvement in accuracy",
+    "latency_ms": 1451,
+    "fallback_used": false,
+    "attempts": [
+        {
+            "provider": "azure",
+            "model": "gpt-4o-mini",
+            "text": "- Processing costs reduced by 18%\n- Improvement in accuracy",
+            "latency_ms": 1451,
+            "usage": {
+                "input_tokens_est": 19,
+                "output_tokens_est": 14,
+                "total_tokens_est": 33,
+                "cost_est_usd": 1.125e-05
+            },
+            "raw": null
+        }
+    ]
+}
+
+
+command:
+curl.exe -X POST http://localhost:8000/generate -H "Content-Type: application/json" -d "{\"prompt\":\"Hello from Bedrock\",\"task\":\"chat\",\"priority\":\"low_cost\",\"provider_hint\":\"bedrock\"}"
+
+output:
+{"request_id":"f15ef407-e968-4e20-aad5-3dd35e858b2d","chosen_provider":"azure","chosen_model":"gpt-4o-mini","text":"Hello! How can I assist you today?","latency_ms":1769,"fallback_used":true,"attempts":[{"provider":"azure","model":"gpt-4o-mini","text":"Hello! How can I assist you today?","latency_ms":1769,"usage":{"input_tokens_est":4,"output_tokens_est":8,"total_tokens_est":12,"cost_est_usd":5.4e-06},"raw":null}]}
+{
+    "request_id": "f15ef407-e968-4e20-aad5-3dd35e858b2d",
+    "chosen_provider": "azure",
+    "chosen_model": "gpt-4o-mini",
+    "text": "Hello! How can I assist you today?",
+    "latency_ms": 1769,
+    "fallback_used": true,
+    "attempts": [
+        {
+            "provider": "azure",
+            "model": "gpt-4o-mini",
+            "text": "Hello! How can I assist you today?",
+            "latency_ms": 1769,
+            "usage": {
+                "input_tokens_est": 4,
+                "output_tokens_est": 8,
+                "total_tokens_est": 12,
+                "cost_est_usd": 5.4e-06
+            },
+            "raw": null
+        }
+    ]
+}
+
+#Test command:
+aws bedrock-runtime invoke-model --model-id "anthropic.claude-sonnet-4-5-20250929-v1:0" --content-type "application/json" --accept "application/json" --body "file://D:/Sola/DEV/Github/genai-cloud-gateway/scripts/bedrock_body.json" --cli-binary-format "raw-in-base64-out" "D:\Sola\DEV\Github\genai-cloud-gateway\scripts\bedrock_response.json" --region "eu-west-2"
+
+#Response:
+An error occurred (ValidationException) when calling the InvokeModel operation: 
+Invocation of model ID anthropic.claude-sonnet-4-5-20250929-v1:0 
+with on-demand throughput isn’t supported. 
+Retry your request with the ID or ARN of an inference profile that contains this model.
+
+
+#Start up the main app - quick Start
+
+Command:
+uvicorn app.main:app --reload --port 8000
+
+Output:
+INFO:     Will watch for changes in these directories: ['D:\\Sola\\DEV\\Github\\genai-cloud-gateway']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [24044] using WatchFiles
+INFO:     Started server process [11464]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.   
+
+In the cmd run the following:
+    command:
+    curl.exe -X POST http://localhost:8000/generate -H "Content-Type: application/json" -d "{\"prompt\":\"Summarise: The project delivered cost savings.\",\"task\":\"summarise\",\"priority\":\"low_cost\"}"
+
+    output:
+    {
+        "request_id": "f5f35f1f-2d31-46ac-8a86-88a1de5dc8e3",
+        "chosen_provider": "bedrock",
+        "chosen_model": "anthropic.claude-3-sonnet-20240229-v1:0",
+        "text": "• The project resulted in cost savings.",
+        "latency_ms": 1020,
+        "fallback_used": false,
+        "attempts": [
+            {
+                "provider": "bedrock",
+                "model": "anthropic.claude-3-sonnet-20240229-v1:0",
+                "text": "• The project resulted in cost savings.",
+                "latency_ms": 1020,
+                "usage": {
+                    "input_tokens_est": 11,
+                    "output_tokens_est": 9,
+                    "total_tokens_est": 20,
+                    "cost_est_usd": 1.4e-05
+                },
+                "raw": null
+            }
+        ]
+    }
+
+    command:
+    curl.exe -X POST http://localhost:8000/generate -H "Content-Type: application/json" -d "{\"prompt\":\"Summarise: The project delivered cost savings.\",\"task\":\"summarise\",\"priority\":\"low_cost\",\"provider_hint\":\"azure\"}"
+
+    output:
+    {
+        "request_id": "746bfcd0-7975-4cb6-a761-b9ff6200718d",
+        "chosen_provider": "azure",
+        "chosen_model": "gpt-4o-mini",
+        "text": "- The project resulted in cost savings.\n- Financial efficiency was achieved through the project's implementation.",
+        "latency_ms": 1424,
+        "fallback_used": false,
+        "attempts": [
+            {
+                "provider": "azure",
+                "model": "gpt-4o-mini",
+                "text": "- The project resulted in cost savings.\n- Financial efficiency was achieved through the project's implementation.",
+                "latency_ms": 1424,
+                "usage": {
+                    "input_tokens_est": 11,
+                    "output_tokens_est": 28,
+                    "total_tokens_est": 39,
+                    "cost_est_usd": 1.845e-05
+                },
+                "raw": null
+            }
+        ]
+    }
+
+
+
+Docker deployment:
+
+command:
+docker build -t genai-cloud-gateway -f docker/Dockerfile .
+
+Output:
+    => => exporting manifest sha256:16e85b69f8ae899e86a8744ea6e01dd470ef45af5ffff65a6f2f14986d182c79                                      0.0s 
+    => => exporting config sha256:f70e9012ccf0d917356b5fef95a610cd5e89e612b4432b4df631b16ace52a042                                        0.0s 
+    => => exporting attestation manifest sha256:57ec7f4f69f1bddc12a42a2afc74f534eea504d9a486f0c58b12cc3feac45759                          0.1s 
+    => => exporting manifest list sha256:e6dd2fef08bb154275183af99f9ed17c326e679b2a8e51f44c62c208f0439e31                                 0.0s 
+    => => naming to docker.io/library/genai-cloud-gateway:latest                                                                          0.0s 
+    => => unpacking to docker.io/library/genai-cloud-gateway:latest  
+
+command:
+docker run --rm -p 8000:8000 --env-file .env genai-cloud-gateway
+
+Output:
+    INFO:     Started server process [1]
+    INFO:     Waiting for application startup.
+    INFO:     Application startup complete.
+    INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+    INFO:     172.17.0.1:41544 - "GET /health HTTP/1.1" 200 OK
+
+Once deployed - on browser
+http://localhost:8000/health
+
+
+command:
+curl.exe -X POST http://localhost:8000/generate -H "Content-Type: application/json" -d "{\"prompt\":\"Hello\",\"task\":\"chat\",\"priority\":\"low_cost\"}"
+
+output:
+{
+    "request_id": "c71e80e3-3a34-4ecd-93ed-76670ea85aff",
+    "chosen_provider": "bedrock",
+    "chosen_model": "anthropic.claude-3-sonnet-20240229-v1:0",
+    "text": "Hello! I'm an AI assistant created by Anthropic to 
+             be helpful, harmless, and honest. How can I assist you today?",
+    "latency_ms": 955,
+    "fallback_used": false,
+    "attempts": [
+        {
+            "provider": "bedrock",
+            "model": "anthropic.claude-3-sonnet-20240229-v1:0",
+            "text": "Hello! I'm an AI assistant created by Anthropic to be helpful, harmless, and honest. How can I assist you today?",
+            "latency_ms": 955,
+            "usage": {
+                "input_tokens_est": 1,
+                "output_tokens_est": 28,
+                "total_tokens_est": 29,
+                "cost_est_usd": 0.00003525
+            },
+            "raw": null
+        }
+    ]
+}
+
+
+#FastAPI’s Swagger UI
+http://localhost:8000/docs
+
+
+#deploying the c# client
+dotnet nuget locals all --clear
+otnet restore .\clients\dotnet-client\DotNetClient.csproj
+cd clients/dotnet-client
+dotnet build .\clients\dotnet-client\DotNetClient.csproj
+
+#Running the c# client
+dotnet run -- http://localhost:8000
+
+
+#Reading the sqlite log
+in powershell...
+command:
+sqlite3 usage_logs.sqlite
+
+output:
+PS D:\Sola\DEV\Github\genai-cloud-gateway> sqlite3 usage_logs.sqlite
+SQLite version 3.51.1 2025-11-28 17:28:25
+Enter ".help" for usage hints.
+
+command:
+ .tables
+
+output:
+ usage_logs
+
+
+command:
+SELECT provider, model, total_tokens_est, cost_est_usd FROM usage_logs ORDER BY id DESC LIMIT 50;
+
+output:
++---------+-------------------------------------------+------------------+---------------+
+| Provider| Model                                     | Tokens (Est.)    | Cost (USD)    |
++---------+-------------------------------------------+------------------+---------------+
+| azure   | gpt-4o-mini                               | 34               | 0.00001545    |
+| bedrock | anthropic.claude-3-sonnet-20240229-v1:0   | 20               | 0.00001400    |
+| azure   | gpt-4o-mini                               | 39               | 0.00001845    |
+| bedrock | anthropic.claude-3-sonnet-20240229-v1:0   | 20               | 0.00001400    |
+| azure   | gpt-4o-mini                               | 12               | 0.00000540    |
+| bedrock | anthropic.claude-haiku-4-5-20251001-v1:0  | 4                | 0.00000000    |
+| azure   | gpt-4o-mini                               | 33               | 0.00001125    |
+| azure   | gpt-4o-mini                               | 9                | 0.00000495    |
+| bedrock | anthropic.claude-haiku-4-5-20251001-v1:0  | 11               | 0.00000000    |
+| azure   | gpt-4o-mini                               | 11               | 0.00000000    |
++---------+-------------------------------------------+------------------+---------------+
