@@ -222,6 +222,13 @@ This layout clearly demonstrates:
 
 ## ▶️ Running the API (Local)
 
+
+## Key Endpoints
+- `GET /health` – service health
+- `POST /generate` – unified GenAI request (routes Azure OpenAI ↔ Bedrock)
+- `GET /docs` – OpenAPI (Swagger UI)
+- 
+
 ### 1. Create virtual environment
 ```powershell
 python -m venv venv
